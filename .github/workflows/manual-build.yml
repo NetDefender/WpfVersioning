@@ -17,12 +17,6 @@ jobs:
       Configuration: Release
 
     steps:
-    - name: Extract Tag
-      id: tag
-      uses: aaronbarnaby/get-tag@v1.0.0
-      with:
-        without_prefix_v: true # Remove prefix `v` from tag
-    
     - name: Checkout
       uses: actions/checkout@v2
       with:
@@ -40,7 +34,7 @@ jobs:
       run: New-Item -Path ${{ env.Zip_Path }} -ItemType Directory
     
     - name: Zip
-      run: Compress-Archive -Path ${{ env.Publish_Path }}\* -DestinationPath ${{ env.Zip_Path }}\App_${{ steps.tag.outputs.tag }}.zip
+      run: Compress-Archive -Path ${{ env.Publish_Path }}\* -DestinationPath ${{ env.Zip_Path }}\App_Content.zip
       shell: pwsh
       
     - name: Release
@@ -49,8 +43,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ steps.tag.outputs.tag }}
-        release_name: ${{ steps.tag.outputs.tag }}
+        tag_name: App_Content
+        release_name: App_Content
         draft: false
         prerelease: false
         
@@ -61,6 +55,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ${{ env.Zip_Path }}\App_${{ steps.tag.outputs.tag }}.zip
-        asset_name: App_${{ steps.tag.outputs.tag }}.zip
+        asset_path: ${{ env.Zip_Path }}\App_Content.zip
+        asset_name: App_Content.zip
         asset_content_type: application/zip 
