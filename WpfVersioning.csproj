@@ -24,10 +24,10 @@
 		<MinVerTagPrefix>v</MinVerTagPrefix>
 	</PropertyGroup>
 
-	<Target Name="MyTarget" AfterTargets="MinVer">
+	<!--<Target Name="MyTarget" AfterTargets="MinVer">
 		<PropertyGroup>
 			<FileVersion>$(MinVerMajor).$(MinVerMinor).$(MinVerPatch).$(MinVerPatch)</FileVersion>
 			<AssemblyVersion>$(MinVerMajor).$(MinVerMinor).$(MinVerPatch).$(MinVerPatch)</AssemblyVersion>
 		</PropertyGroup>
-	</Target>
+	</Target>-->
 </Project>
