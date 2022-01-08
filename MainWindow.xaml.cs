@@ -23,7 +23,7 @@ namespace WpfVersioning
         public MainWindow()
         {
             InitializeComponent();
-            //Otro cambio
+            //Otro cambio más
         }
     }
 }
