@@ -23,7 +23,7 @@ namespace WpfVersioning
         public MainWindow()
         {
             InitializeComponent();
-            //To Tag
+            //To Tag.
         }
     }
 }
