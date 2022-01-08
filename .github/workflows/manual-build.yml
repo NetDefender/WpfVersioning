@@ -1,0 +1,66 @@
+name:  Build
+
+on:
+  workflow_dispatch:
+env:
+  Actions_Allow_Unsecure_Commands: true
+      
+jobs:
+  build:
+    runs-on: windows-latest
+    environment: Development
+
+    env:
+      Project_Path: WpfVersioning.csproj
+      Zip_Path: Zip
+      Publish_Path: publish
+      Configuration: Release
+
+    steps:
+    - name: Extract Tag
+      id: tag
+      uses: aaronbarnaby/get-tag@v1.0.0
+      with:
+        without_prefix_v: true # Remove prefix `v` from tag
+    
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '6.0.x'
+
+    - name: Publish
+      run: dotnet publish -c ${{ env.Configuration }} .\${{ env.Project_Path }} -o "${{ env.Publish_Path }}"
+    
+    - name: Create Zip Directory
+      run: New-Item -Path ${{ env.Zip_Path }} -ItemType Directory
+    
+    - name: Zip
+      run: Compress-Archive -Path ${{ env.Publish_Path }}\* -DestinationPath ${{ env.Zip_Path }}\App_${{ steps.tag.outputs.tag }}.zip
+      shell: pwsh
+      
+    - name: Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.tag.outputs.tag }}
+        release_name: ${{ steps.tag.outputs.tag }}
+        draft: false
+        prerelease: false
+        
+    - name: Append Upload
+      id: upload-release-asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ${{ env.Zip_Path }}\App_${{ steps.tag.outputs.tag }}.zip
+        asset_name: App_${{ steps.tag.outputs.tag }}.zip
+        asset_content_type: application/zip 
