@@ -2,6 +2,11 @@ name:  Build
 
 on:
   workflow_dispatch:
+    inputs:
+        releaseName:
+          description: 'Release Name'     
+          required: true
+          default: 'App_Content'
 env:
   Actions_Allow_Unsecure_Commands: true
       
@@ -34,7 +39,7 @@ jobs:
       run: New-Item -Path ${{ env.Zip_Path }} -ItemType Directory
     
     - name: Zip
-      run: Compress-Archive -Path ${{ env.Publish_Path }}\* -DestinationPath ${{ env.Zip_Path }}\App_Content.zip
+      run: Compress-Archive -Path ${{ env.Publish_Path }}\* -DestinationPath ${{ env.Zip_Path }}\${{ inputs.releaseName }}.zip
       shell: pwsh
       
     - name: Release
@@ -43,8 +48,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: App_Content
-        release_name: App_Content
+        tag_name: ${{ inputs.releaseName }}
+        release_name: ${{ inputs.releaseName }}
         draft: false
         prerelease: false
         
@@ -56,5 +61,5 @@ jobs:
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ${{ env.Zip_Path }}\App_Content.zip
-        asset_name: App_Content.zip
+        asset_name: ${{ inputs.releaseName }}.zip
         asset_content_type: application/zip 
