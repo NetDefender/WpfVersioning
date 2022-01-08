@@ -1,0 +1,2 @@
+# WpfVersioning
+Versioning with minversion
